@@ -6,6 +6,13 @@ Verilog implementation of an SPI slave as part of a larger SPI controller projec
 
 This design implements a basic SPI Slave (Receiver only) using **SPI Mode 0** (CPOL=0, CPHA=0). It samples incoming data on the rising edge of the serial clock (`sclk`) and generates a completion pulse once a full byte is captured.
 
+![SPI _slaveRX_fsmdiagram](https://github.com/user-attachments/assets/875d4a4a-50c9-4533-9f17-e42fb5495400)
+
+<img width="2339" height="1654" alt="waveforms" src="https://github.com/user-attachments/assets/c550cfa3-1adb-4161-9e41-92d8e864652b" />
+
+![schematic](https://github.com/user-attachments/assets/ce362451-d0a1-4c73-b7a1-07992952ab50)
+
+
 ### Key Features
 * **Clock-Domain Crossing (CDC):** Uses 2-stage synchronisers for `sclk`, `cs`, and `mosi` to mitigate metastability.
 * **Edge Detection:** Internal logic detects rising and falling edges of the synchronised SPI clock.
