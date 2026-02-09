@@ -30,15 +30,50 @@ module spi_slave_tb;
         init();
         reset_dut();
 
-        // Send bytes at 10 MHz
-        send_byte(8'hA4, 10); 
-        send_byte(8'h3C, 10);
-        // Send a byte at a slower 2 MHz
-        send_byte(8'hFF, 2);
+        // Alternating pattern
+        send_byte(8'hAA,10);  // 10101010
+        send_byte(8'h55,10);  // 01010101
+        
+        // Walking bit
+        send_byte(8'h01,10);  // 00000001
+        send_byte(8'h02,10);  // 00000010
+        send_byte(8'h04,10);  // 00000100
+        send_byte(8'h08,10);  // 00001000
+        send_byte(8'h10,10);  // 00010000
+        send_byte(8'h20,10);  // 00100000
+        send_byte(8'h40,10);  // 01000000
+        send_byte(8'h80,10);  // 10000000
+        
+        // Streaming — verifies continuous byte reception while CS stays low
+        send_byte(8'h12,10);  // 00010010 
+        send_byte(8'h34,10);  // 00110100 
+        send_byte(8'h56,10);  // 01010110 
+        send_byte(8'h78,10);  // 01111000 
 
-        // Edge cases
-        send_byte(8'h00, 5);
-        send_byte(8'h80, 5);
+
+        
+        // Frequency variation
+        send_byte(8'hFF,2);
+        
+        // Abort test
+        cs <= 0;
+        mosi <= 1;
+        generate_sclk(10);
+        generate_sclk(10);
+        cs <= 1;      // abort mid-byte
+        #100;
+        send_byte(8'hA5,10);
+
+        
+        // Reset test
+        cs <= 0;
+        send_byte(8'hF0,10);
+        rst <= 1;
+        #20;
+        rst <= 0;
+        send_byte(8'h0F,10);
+
+
 
         $display("\nAll tests finished!");
         $finish;
